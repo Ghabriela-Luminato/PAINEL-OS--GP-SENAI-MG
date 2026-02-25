@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Controle de Ordens de Serviço</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+:root{
+  --cor:#0b6efd;
+  --bg:#eef2f6;
+}
+
+body{
+  margin:0;
+  font-family:Segoe UI, Arial, Helvetica, sans-serif;
+  background:var(--bg);
+}
+
+/* CABEÇALHO */
+header{
+  background:white;
+  padding:18px 24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+h1{
+  margin:0;
+  font-size:22px;
+  font-weight:600;
+}
+
+/* BOTÃO NOVA OS */
+#btnNova{
+  background:var(--cor);
+  color:white;
+  border:none;
+  padding:12px 22px;
+  font-size:16px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+#btnNova:hover{
+  transform:translateY(-1px);
+  box-shadow:0 5px 12px rgba(0,0,0,.18);
+}
+
+.container{
+  max-width:1100px;
+  margin:30px auto;
+  padding:0 18px;
+}
+
+/* FORMULÁRIO */
+#formBox{
+  background:white;
+  padding:40px;          /* espaço interno */
+  border-radius:18px;
+  box-shadow:0 12px 35px rgba(0,0,0,.14);
+  margin:25px 0 40px 0;
+  display:none;
+}
+
+/* GRID CAMPOS */
+
+.grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:18px 18px;
+  margin-top:10px;
+}
+
+
+/* CAMPOS */
+input, textarea{
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #c9cdd2;
+    font-size:14px;
+    width:100%;
+    box-sizing:border-box;
+    height:38px;
+}
+
+
+input:focus, textarea:focus{
+  border-color:#0b6efd;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(11,110,253,0.15);
+}
+
+/* campo grande */
+textarea{
+  grid-column:span 3;
+  min-height:120px;
+}
+
+/* quantidade menor */
+#quantidade{
+  max-width:160px;
+}
+
+/* BOTÕES */
+.acoesForm{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+}
+
+.salvar{
+  background:#16a34a;
+  color:white;
+  border:none;
+  padding:12px 24px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+  transition:.2s;
+}
+.salvar:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+.cancelar{
+  background:#6c757d;
+  color:white;
+  border:none;
+  padding:12px 24px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* CARDS */
+.lista{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:20px;
+}
+
+.card{
+  position:relative;
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  border-top:6px solid var(--cor);
+}
+
+.icones{
+  position:absolute;
+  top:-14px;
+  right:-14px;
+  display:flex;
+  gap:8px;
+}
+
+.iconeBtn{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:none;
+  color:white;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+
+.editar{background:#ffc107;color:#000}
+.excluir{background:#dc3545}
+.voltar{background:#0e670b}
+
+.titulo{
+  font-weight:700;
+  font-size:17px;
+  margin-bottom:10px;
+}
+
+.campo{
+  margin:5px 0;
+  font-size:14px;
+}
+
+/* empresa ocupa linha inteira */
+#empresa{
+  grid-column:span 2;
+}
+
+/* telefone menor */
+#telefone{
+  grid-column:span 1;
+}
+
+/* tipo de serviço grande */
+#tipo{
+  grid-column:span 2;
+}
+
+/* quantidade pequena */
+#quantidade{
+  max-width:140px;
+}
+
+/* observação ocupa tudo */
+#observacao{
+  grid-column:1 / -1;
+  min-height:130px;
+}
+
+/* espaço dos botões */
+.acoesForm{
+  margin-top:25px;
+}
+/* 📱 RESPONSIVO PARA CELULAR */
+@media (max-width: 768px){
+
+  header{
+    flex-direction:column;
+    gap:12px;
+    text-align:center;
+  }
+
+  #btnNova{
+    width:100%;
+  }
+
+  .container{
+    margin:15px auto;
+    padding:0 12px;
+  }
+
+  #formBox{
+    padding:20px;
+  }
+
+  /* grid vira 1 coluna */
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  #empresa,
+  #tipo,
+  #telefone,
+  #quantidade,
+  #observacao{
+    grid-column:1 / -1;
+    max-width:100%;
+  }
+
+  textarea{
+    min-height:100px;
+  }
+
+  .acoesForm{
+    flex-direction:column;
+  }
+
+  .acoesForm button{
+    width:100%;
+  }
+
+  h1{
+    font-size:18px;
+  }
+
+  .titulo{
+    font-size:15px;
+  }
+
+  .campo{
+    font-size:13px;
+  }
+
+  .iconeBtn{
+    width:32px;
+    height:32px;
+  }
+}
+
+
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+  <h1>Controle de Ordens de Serviço</h1>
+  <button id="btnNova"><i class="fa fa-plus"></i> Nova OS</button>
+</header>
+
+<div class="container">
+
+  <div id="formBox">
+    <form id="formOS">
+
+
+  <div class="grid">
+
+    <input type="hidden" id="editIndex">
+
+    <input id="empresa" placeholder="Nome da empresa" required>
+    <input id="data" type="date" required>
+    <input id="telefone" placeholder="Telefone">
+
+    <input id="tipo" placeholder="Tipo de serviço (ex: Banner, Adesivo, Cartão...)" required>
+    <input id="quantidade" type="number" placeholder="Quantidade">
+
+    <textarea id="observacao" placeholder="Observações"></textarea>
+
+  </div>
+
+  <div class="acoesForm">
+    <button class="salvar" type="submit">Salvar OS</button>
+    <button class="cancelar" type="button" id="cancelar">Cancelar</button>
+  </div>
+
+</form>
+
+
+  </div>
+  <input 
+id="filtro"
+placeholder="Pesquisar por empresa, telefone ou código..."
+style="
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid #c9cdd2;
+margin-bottom:20px;
+font-size:15px;
+">
+
+
+
+  <div class="lista" id="listaOS"></div>
+
+</div>
+
+<script>
+const btnNova=document.getElementById('btnNova');
+const formBox=document.getElementById('formBox');
+const form=document.getElementById('formOS');
+const lista=document.getElementById('listaOS');
+const cancelar=document.getElementById('cancelar');
+const filtro = document.getElementById('filtro');
+filtro.onkeyup = () => render();
+
+
+function pegarDados(){
+  return JSON.parse(localStorage.getItem('ordens_servico')||'[]');
+}
+
+function salvarDados(dados){
+  localStorage.setItem('ordens_servico',JSON.stringify(dados));
+}
+
+function limpar(){
+  form.reset();
+  document.getElementById('editIndex').value='';
+}
+
+btnNova.onclick=()=>{
+  formBox.style.display='block';
+  limpar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+cancelar.onclick=()=>{
+  formBox.style.display='none';
+  limpar();
+}
+function gerarCodigo(){
+    return "OS-" + Math.floor(1000 + Math.random() * 9000);
+}
+
+form.onsubmit=(e)=>{
+  e.preventDefault();
+
+ const os={
+    codigo: gerarCodigo(),
+    empresa:document.getElementById('empresa').value,
+    data:document.getElementById('data').value,
+    telefone:document.getElementById('telefone').value,
+    tipo:document.getElementById('tipo').value,
+    quantidade:document.getElementById('quantidade').value,
+    observacao:document.getElementById('observacao').value,
+    status:"os"
+};
+
+
+  let dados=pegarDados();
+  const edit=document.getElementById('editIndex').value;
+
+  if(edit!==''){
+    dados[edit]=os;
+  }else{
+    dados.push(os);
+  }
+
+  salvarDados(dados);
+  formBox.style.display='none';
+  render();
+  limpar();
+}
+
+function excluir(i){
+  if(!confirm('Excluir esta OS?'))return;
+  let dados=pegarDados();
+  dados.splice(i,1);
+  salvarDados(dados);
+  render();
+}
+
+function editar(i){
+  let os=pegarDados()[i];
+
+  empresa.value=os.empresa;
+  data.value=os.data;
+  telefone.value=os.telefone;
+  tipo.value=os.tipo;
+  quantidade.value=os.quantidade;
+  observacao.value=os.observacao;
+
+  document.getElementById('editIndex').value=i;
+  formBox.style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function avancarOS(i){
+
+  let dados = pegarDados();
+
+  let proximaTela = "";
+
+  if(dados[i].status === "os"){
+      dados[i].status = "pre";
+      proximaTela = "preimpressao.html";
+  }
+  else if(dados[i].status === "pre"){
+      dados[i].status = "producao";
+      proximaTela = "impressao.html";
+  }
+  else if(dados[i].status === "producao"){
+      dados[i].status = "corte";
+      proximaTela = "corte.html";
+  }
+  else if(dados[i].status === "corte"){
+      dados[i].status = "expedicao";
+      proximaTela = "expedicao.html";
+  }
+
+  salvarDados(dados);
+
+  // leva automaticamente pro setor
+  window.location.href = proximaTela;
+}
+
+
+
+
+
+function render(){
+  lista.innerHTML='';
+  let dados=pegarDados();
+
+dados.forEach((os,i)=>{
+
+ if(os.status !== "os") return;
+
+// texto digitado no campo pesquisar
+let busca = filtro.value.toLowerCase();
+
+// filtrar empresa, telefone, tipo ou código
+if(
+!os.empresa.toLowerCase().includes(busca) &&
+!(os.telefone || '').toLowerCase().includes(busca) &&
+!(os.tipo || '').toLowerCase().includes(busca) &&
+!(os.codigo || '').toLowerCase().includes(busca)
+){
+return;
+}
+
+function formatarData(dataISO){
+  if(!dataISO) return "-";
+
+  const partes = dataISO.split("-");
+  if(partes.length !== 3) return dataISO;
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+    lista.innerHTML+=`
+    <div class="card">
+
+      <div class="icones">
+       <button class="iconeBtn voltar" onclick="avancarOS(${i})">
+  <i class="fa fa-arrow-right"></i>
+</button>
+
+        <button class="iconeBtn editar" onclick="editar(${i})"><i class="fa fa-pen"></i></button>
+        <button class="iconeBtn excluir" onclick="excluir(${i})"><i class="fa fa-trash"></i></button>
+      </div>
+
+      <div class="titulo">${os.empresa} (${os.codigo})</div>
+
+
+      <div class="campo"><b>Data:</b> ${formatarData(os.data)}
+</div>
+      <div class="campo"><b>Telefone:</b> ${os.telefone||'-'}</div>
+      <div class="campo"><b>Tipo:</b> ${os.tipo||'-'}</div>
+      <div class="campo"><b>Quantidade:</b> ${os.quantidade||'-'}</div>
+      <div class="campo"><b>Observações:</b> ${os.observacao||'-'}</div>
+
+    </div>`;
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

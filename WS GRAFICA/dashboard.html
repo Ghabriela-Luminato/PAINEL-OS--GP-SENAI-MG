@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+  margin:0;
+  font-family:Segoe UI, Arial, Helvetica, sans-serif;
+  background:#eef2f6;
+}
+
+/* KPIs */
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:18px;
+  padding:20px;
+}
+
+/* Corrigido: botão agora faz parte da grid e não quebra layout */
+.area-limpar{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+}
+
+.btn-limpar{
+  background:#ab0000;
+  color:white;
+  border:none;
+  padding:10px 20px;
+  font-size:15px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+.btn-limpar:hover{ background:#333; }
+
+/* DASHBOARD */
+.dashboard {
+    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 800px;   /* 🔥 controla tamanho no PC */
+    margin: 0 auto;
+}
+
+
+.grafico canvas {
+    max-height: 320px !important;
+}
+
+
+/* CARD DO GRAFICO */
+.grafico {
+    background: white;
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+
+
+.grafico canvas{
+  width:100% !important;     /* ⬅ Chart.js responsivo */
+  height:auto !important;    /* ⬅ evita deformação */
+}
+
+/* TITULO */
+.grafico h3{
+  margin-top:0;
+  margin-bottom:15px;
+}
+
+/* KPI */
+.kpi{
+  background:white;
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 4px 14px rgba(0,0,0,.15);
+  text-align:center;
+}
+
+.kpi h2{
+  margin:0;
+  font-size:32px;
+  color:#0b6efd;
+}
+
+.kpi span{
+  color:#555;
+}
+
+/* MUITO IMPORTANTE — RESPONSIVIDADE MOBILE */
+
+
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<!-- INDICADORES -->
+<div class="kpis">
+
+  <div class="kpi">
+    <h2 id="totalOS">0</h2>
+    <span>Total de Ordens</span>
+  </div>
+
+  <div class="kpi">
+    <h2 id="emProducao">0</h2>
+    <span>Em Impressão</span>
+  </div>
+
+  <div class="kpi">
+    <h2 id="finalizadas">0</h2>
+    <span>Finalizadas</span>
+  </div>
+
+  <div class="area-limpar">
+  <button class="btn-limpar" onclick="limparSistema()">
+    Limpar dados 
+  </button>
+</div>
+
+</div>
+
+<!-- GRAFICOS -->
+<div class="dashboard">
+
+  <div class="grafico">
+    <h3>Status da Produção</h3>
+    <canvas id="graficoStatus"></canvas>
+  </div>
+
+  <div class="grafico">
+    <h3>Tipos de Serviço mais pedidos</h3>
+    <canvas id="graficoTipo"></canvas>
+  </div>
+
+  <div class="grafico">
+    <h3>Demanda por Setor</h3>
+    <canvas id="graficoSetor"></canvas>
+  </div>
+
+</div>
+<script>
+
+/* LER BANCO */
+function pegarDados(){
+  return JSON.parse(localStorage.getItem('ordens_servico')||'[]');
+}
+
+const dados = pegarDados();
+
+/* CONTADORES */
+let statusContagem = {
+  pre:0,
+  producao:0,
+  corte:0,
+  finalizado:0
+};
+
+let tipoContagem = {};
+
+/* PROCESSAR DADOS */
+dados.forEach(os=>{
+
+  let status = (os.status || "")
+  .toLowerCase()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "");
+
+  // CONTAGEM DE STATUS
+  if(statusContagem[status] !== undefined){
+      statusContagem[status]++;
+  }
+
+  // TIPOS DE SERVIÇO
+  let tipo = os.tipo || "Não informado";
+  tipoContagem[tipo] = (tipoContagem[tipo]||0)+1;
+
+});
+
+
+/* KPIs */
+document.getElementById('totalOS').innerText = dados.length;
+
+document.getElementById('emProducao').innerText =
+  statusContagem.pre +
+  statusContagem.producao +
+  statusContagem.corte;
+
+document.getElementById('finalizadas').innerText =
+  statusContagem.finalizado;
+
+
+/* GRAFICO STATUS */
+new Chart(document.getElementById('graficoStatus'),{
+  type:'doughnut',
+  data:{
+    labels:['Pré-impressão','Impressão','Corte','Finalizado'],
+    datasets:[{
+      data:[
+        statusContagem.pre,
+        statusContagem.producao,
+        statusContagem.corte,
+        statusContagem.finalizado
+      ]
+    }]
+  }
+});
+
+
+/* GRAFICO TIPOS */
+new Chart(document.getElementById('graficoTipo'),{
+  type:'bar',
+  data:{
+    labels:Object.keys(tipoContagem),
+    datasets:[{
+      label:'Quantidade',
+      data:Object.values(tipoContagem)
+    }]
+  },
+  options:{
+    scales:{
+      y:{
+        beginAtZero:true,
+        ticks:{precision:0}
+      }
+    }
+  }
+});
+
+
+/* GRAFICO DEMANDA */
+new Chart(document.getElementById('graficoSetor'),{
+  type:'pie',
+  data:{
+    labels:['Pré-impressão','Impressão','Corte'],
+    datasets:[{
+      data:[
+        statusContagem.pre,
+        statusContagem.producao,
+        statusContagem.corte
+      ]
+    }]
+  }
+});
+
+function limparSistema(){
+
+if(!confirm("ATENÇÃO!\n\nIsso apagará TODAS as ordens de serviço do sistema.\nEssa ação não pode ser desfeita.\n\nDeseja continuar?"))
+return;
+
+/* APAGA BANCO */
+localStorage.removeItem("ordens_servico");
+
+/* recria vazio */
+localStorage.setItem("ordens_servico", JSON.stringify([]));
+
+alert("Sistema zerado com sucesso ✔");
+
+/* recarrega dashboard */
+location.reload();
+}
+
+
+</script>
+
+</body>
+</html>

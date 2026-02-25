@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expedição</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  font-family: Arial;
+  background:#f4f6f9;
+  padding:20px;
+  margin:0;
+}
+
+/* ===== TÍTULO ===== */
+h1{
+  font-size:1.5rem;
+  text-align:center;
+  margin-bottom:20px;
+  font-weight:600;
+}
+
+/* ===== FILTRO ===== */
+#filtro{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #dcdfe3;
+  margin-bottom:25px;
+  font-size:0.95rem;
+  background:white;
+}
+
+/* ===== GRID ===== */
+#lista{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(420px, 1fr));
+  gap:20px;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:white;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  font-size:0.92rem;
+  transition:.2s;
+}
+
+.card:hover{
+  box-shadow:0 4px 14px rgba(0,0,0,0.12);
+}
+
+/* ===== TÍTULO DO CARD ===== */
+.titulo{
+  font-weight:600;
+  font-size:1rem;
+  margin-bottom:10px;
+  color:#222;
+}
+
+/* ===== CAMPOS ===== */
+.campo{
+  margin:4px 0;
+  color:#555;
+}
+
+.campo span{
+  font-weight:600;
+  color:#333;
+}
+
+/* ===== ÁREA DOS BOTÕES ===== */
+.acoes{
+  margin-top:15px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+/* ===== BOTÕES ===== */
+.btn{
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:0.85rem;
+  font-weight:600;
+}
+
+/* CORES */
+.entregue{
+  background:#198754;
+  color:white;
+}
+
+.naoentregue{
+  background:#ffc107;
+  color:#222;
+}
+
+.retornar{
+  background:#6c757d;
+  color:white;
+}
+
+.excluir{
+  background:#dc3545;
+  color:white;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width:480px){
+
+  #lista{
+    grid-template-columns:1fr;
+  }
+
+  .acoes{
+    flex-direction:column;
+  }
+
+  .btn{
+    width:100%;
+  }
+}
+
+
+</style>
+</head>
+
+<body>
+
+<h1>EXPEDIÇÃO</h1>
+<input id="filtro" placeholder="Pesquisar por empresa, telefone ou código...">
+
+
+<div id="lista"></div>
+
+<script>
+
+/* SEU JS CONTINUA IGUAL — NÃO ALTEREI NADA */
+
+const lista = document.getElementById("lista");
+const filtro = document.getElementById("filtro");
+
+function pegarDados(){
+  return JSON.parse(localStorage.getItem("ordens_servico") || "[]");
+}
+
+function salvarDados(dados){
+  localStorage.setItem("ordens_servico", JSON.stringify(dados));
+}
+
+function acharOS(codigo){
+  let dados = pegarDados();
+  return dados.findIndex(os => os.codigo == codigo);
+}
+
+function entregue(codigo){
+  let dados = pegarDados();
+  let i = acharOS(codigo);
+  if(i === -1) return;
+
+  dados[i].status = "finalizado";
+  salvarDados(dados);
+  carregar();
+  alert("OS marcada como ENTREGUE ✔");
+}
+
+function naoEntregue(codigo){
+  let dados = pegarDados();
+  let i = acharOS(codigo);
+  if(i === -1) return;
+
+  dados[i].status = "corte";
+  salvarDados(dados);
+  window.location.href = "corte.html";
+}
+
+function retornar(codigo){
+  let dados = pegarDados();
+  let i = acharOS(codigo);
+  if(i === -1) return;
+
+  dados[i].status = "corte";
+  salvarDados(dados);
+  window.location.href = "corte.html";
+}
+
+function excluir(codigo){
+  if(!confirm("Excluir essa OS?")) return;
+
+  let dados = pegarDados();
+  let i = acharOS(codigo);
+  if(i === -1) return;
+
+  dados.splice(i,1);
+  salvarDados(dados);
+  carregar();
+}
+
+function formatarData(dataISO){
+  if(!dataISO) return "-";
+  const partes = dataISO.split("-");
+  if(partes.length !== 3) return dataISO;
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function carregar(){
+  lista.innerHTML = "";
+  let dados = pegarDados();
+
+  dados.forEach((os)=>{
+
+    let status = (os.status || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    if(status !== "expedicao") return;
+
+    let busca = (filtro.value || "").toLowerCase();
+
+    if(
+      !((os.empresa || "").toLowerCase().includes(busca)) &&
+      !((os.telefone || "").toLowerCase().includes(busca)) &&
+      !((os.codigo || "").toLowerCase().includes(busca))
+    ) return;
+
+    lista.innerHTML += `
+    <div class="card">
+
+      <div class="titulo">${os.empresa} (${os.codigo})</div>
+      <b>Data:</b> ${formatarData(os.data)}<br>
+
+      <div class="campo"><span>Tipo:</span> ${os.tipo || "-"}</div>
+      <div class="campo"><span>Quantidade:</span> ${os.quantidade || "-"}</div>
+      <div class="campo"><span>Telefone:</span> ${os.telefone || "-"}</div>
+      <div class="campo"><span>Observação:</span> ${os.observacao || "-"}</div>
+
+      <div class="acoes">
+        <button class="btn entregue" onclick="entregue('${os.codigo}')">
+          ✔ Entregue
+        </button>
+
+        <button class="btn naoentregue" onclick="naoEntregue('${os.codigo}')">
+          ✕ Não entregue
+        </button>
+
+        <button class="btn retornar" onclick="retornar('${os.codigo}')">
+          ← Retornar Os
+        </button>
+
+        <button class="btn excluir" onclick="excluir('${os.codigo}')">
+          🗑 Excluir
+        </button>
+      </div>
+
+    </div>`;
+  });
+
+  if(lista.innerHTML === "")
+    lista.innerHTML = "<p>Nenhuma OS aguardando expedição.</p>";
+}
+
+filtro.onkeyup = () => carregar();
+carregar();
+
+</script>
+
+</body>
+</html>

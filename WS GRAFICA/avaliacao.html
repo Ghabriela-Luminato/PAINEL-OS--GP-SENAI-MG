@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação do Processo</title>
+
+<style>
+
+body{
+  margin:0;
+  font-family:Segoe UI, Arial;
+  background:#eef2f6;
+}
+
+/* TITULO */
+header{
+  background:white;
+  padding:18px 24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+h1{
+  margin:0;
+}
+
+/* KPIs */
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.kpi{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  text-align:center;
+}
+
+.kpi h2{
+  font-size:34px;
+  margin:0;
+  color:#0b6efd;
+}
+
+.kpi span{
+  color:#555;
+}
+
+/* LISTAS */
+.area{
+  padding:20px;
+}
+
+.tabela{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.linha{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
+
+.linha:last-child{
+  border-bottom:none;
+}
+
+.atrasado{
+  color:#dc3545;
+  font-weight:bold;
+}
+
+.area-limpar{
+  padding: 20px;         /* espaço em volta */
+  text-align: center;     /* centraliza horizontalmente */
+  margin-top: 20px;       /* distância do grid de KPIs */
+}
+
+.btn-limpar{
+  background:#dc3545;
+  color:white;
+  border:none;
+  padding:10px 22px;      /* botão médio */
+  font-size:15px;         /* texto legível */
+  border-radius:12px;     /* arredondado */
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.btn-limpar:hover{
+  background:#e74c3c;     /* hover mais claro */
+}
+
+</style>
+</head>
+
+<body>
+<header>
+  <h1>Avaliação do Processo</h1>
+</header>
+
+<div class="kpis">
+
+  <div class="kpi">
+    <h2 id="filaTotal">0</h2>
+    <span>OS em Produção</span>
+  </div>
+
+  <div class="kpi">
+    <h2 id="gargalo">-</h2>
+    <span>Setor com Mais Demanda</span>
+  </div>
+
+  <div class="kpi">
+    <h2 id="tempoMedio">0</h2>
+    <span>Dias Médios em Produção</span>
+  </div>
+
+  <div class="kpi">
+    <h2 id="atrasadas">0</h2>
+    <span>OS Atrasadas (&gt; 3 dias)</span>
+  </div>
+
+</div> <!-- FECHA kpis -->
+
+<!-- BOTÃO FORA DO GRID -->
+<div class="area-limpar">
+  <button class="btn-limpar" onclick="limparSistema()">
+    Limpar dados
+  </button>
+</div>
+
+
+<!-- LISTA DE ATRASADAS -->
+<div class="area">
+  <div class="tabela">
+    <h3>Ordens Possivelmente Atrasadas</h3>
+    <div id="listaAtrasos"></div>
+  </div>
+</div>
+
+<script>
+
+/* BANCO */
+function pegarDados(){
+  return JSON.parse(localStorage.getItem('ordens_servico')||'[]');
+}
+
+const dados = pegarDados();
+
+/* CONTADORES */
+let pre=0, producao=0, corte=0;
+let atrasadas=0;
+let diasTotal=0;
+let contadorTempo=0;
+
+const hoje = new Date();
+
+dados.forEach(os=>{
+
+  // contar fila por setor
+  if(os.status==="pre") pre++;
+  if(os.status==="producao") producao++;
+  if(os.status==="corte") corte++;
+
+  // calcular tempo em dias
+  if(os.data){
+    let dataOS = new Date(os.data);
+    let diff = Math.floor((hoje - dataOS)/(1000*60*60*24));
+
+    diasTotal += diff;
+    contadorTempo++;
+
+    // atraso maior que 3 dias
+    if(diff >= 3 && os.status!=="entregue"){
+      atrasadas++;
+
+      document.getElementById('listaAtrasos').innerHTML +=
+      `<div class="linha atrasado">
+        ${os.codigo} - ${os.empresa} (${diff} dias)
+      </div>`;
+    }
+  }
+
+});
+
+/* FILA TOTAL */
+document.getElementById('filaTotal').innerText = pre+producao+corte;
+
+/* GARGALO */
+let maior = Math.max(pre,producao,corte);
+let nome = "Pré-impressão";
+
+if(maior===producao) nome="Impressão";
+if(maior===corte) nome="Corte";
+
+document.getElementById('gargalo').innerText = nome;
+
+/* TEMPO MÉDIO */
+let media = contadorTempo ? (diasTotal/contadorTempo).toFixed(1) : 0;
+document.getElementById('tempoMedio').innerText = media;
+
+/* ATRASADAS */
+document.getElementById('atrasadas').innerText = atrasadas;
+
+function limparSistema(){
+
+if(!confirm("Apagar TODAS as ordens do sistema?"))
+return;
+
+localStorage.removeItem("ordens_servico");
+localStorage.setItem("ordens_servico", JSON.stringify([]));
+
+alert("Dados apagados!");
+location.reload();
+}
+
+
+</script>
+
+</body>
+</html>

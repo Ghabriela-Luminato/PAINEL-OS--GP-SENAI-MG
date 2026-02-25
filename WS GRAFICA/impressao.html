@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressão</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  font-family: Arial;
+  background:#f0f2f5;
+  padding:15px;
+  margin:0;
+}
+
+/* ===== TÍTULO PADRÃO ===== */
+h1{
+  font-size:1.4rem;
+  text-align:center;
+  margin-bottom:15px;
+}
+
+/* ===== FILTRO PADRÃO ===== */
+#filtro{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #c9cdd2;
+  margin-bottom:20px;
+  font-size:1rem;
+}
+
+/* ===== GRID ===== */
+.lista{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:18px;
+}
+
+/* ===== CARD ===== */
+.card{
+  position:relative;
+  background:white;
+  padding:15px;
+  padding-top:45px;
+  border-radius:10px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.15);
+  font-size:0.95rem;
+  border-top:5px solid #f97316;
+}
+
+.titulo{
+  font-weight:bold;
+  margin-bottom:8px;
+  word-break:break-word;
+}
+
+.campo{
+  margin:5px 0;
+}
+
+/* ===== ÍCONES ===== */
+.icones{
+  position:absolute;
+  top:10px;
+  right:10px;
+  display:flex;
+  gap:6px;
+}
+
+.iconeBtn{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:none;
+  color:white;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+}
+
+.voltar{background:#16a34a;}
+.avancar{background:#0d6efd;}
+.excluir{background:#dc3545;}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width:480px){
+  body{
+    padding:10px;
+  }
+
+  h1{
+    font-size:1.2rem;
+  }
+
+  .card{
+    font-size:0.9rem;
+  }
+}
+
+
+</style>
+</head>
+
+<body>
+
+<h1>IMPRESSÃO</h1>
+<input id="filtro" placeholder="Pesquisar por empresa, telefone ou código...">
+<div class="lista" id="lista-impressao"></div>
+
+<script>
+
+const lista = document.getElementById("lista-impressao");
+const filtro = document.getElementById("filtro");
+
+function pegarDados(){
+  return JSON.parse(localStorage.getItem("ordens_servico") || "[]");
+}
+
+function salvarDados(dados){
+  localStorage.setItem("ordens_servico", JSON.stringify(dados));
+}
+
+function voltar(i){
+  let dados = pegarDados();
+
+  // volta para PRÉ-IMPRESSÃO
+  dados[i].status = "pre";
+
+  // guarda qual OS voltou
+  localStorage.setItem("os_selecionada", dados[i].codigo);
+
+  salvarDados(dados);
+
+  // abre a tela pré-impressão
+  window.location.href = "preimpressao.html";
+}
+
+function avancar(i){
+  let dados = pegarDados();
+
+  // muda status
+  dados[i].status = "corte";
+
+  // guarda qual OS foi aberta
+  localStorage.setItem("os_selecionada", dados[i].codigo);
+
+  salvarDados(dados);
+
+  // abre tela de corte
+  window.location.href = "corte.html";
+}
+
+
+/* excluir */
+function excluir(i){
+  if(!confirm("Excluir esta OS?")) return;
+  let dados = pegarDados();
+  dados.splice(i,1);
+  salvarDados(dados);
+  render();
+}
+
+function formatarData(dataISO){
+  if(!dataISO) return "-";
+
+  const partes = dataISO.split("-");
+  if(partes.length !== 3) return dataISO;
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function render(){
+  lista.innerHTML = "";
+  let dados = pegarDados();
+
+  dados.forEach((os,i)=>{
+
+    // Mostrar apenas Impressão
+    if(os.status !== "producao") return;
+
+    let busca = (filtro.value || "").toLowerCase();
+
+    if(
+      !((os.empresa || "").toLowerCase().includes(busca)) &&
+      !((os.telefone || "").toLowerCase().includes(busca)) &&
+      !((os.codigo || "").toLowerCase().includes(busca))
+    ) return;
+
+    lista.innerHTML += `
+    <div class="card">
+
+      <div class="icones">
+       <button class="iconeBtn voltar" onclick="event.stopPropagation(); voltar(${i})">
+
+          <i class="fa fa-rotate-left"></i>
+        </button>
+
+        <button class="iconeBtn avancar" onclick="avancar(${i})">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+
+        <button class="iconeBtn excluir" onclick="excluir(${i})">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+
+      <div class="titulo">${os.empresa} (${os.codigo})</div>
+<b>Data:</b> ${formatarData(os.data)}<br>
+
+      <div class="campo"><b>Telefone:</b> ${os.telefone || "-"}</div>
+      <div class="campo"><b>Tipo:</b> ${os.tipo || "-"}</div>
+      <div class="campo"><b>Quantidade:</b> ${os.quantidade || "-"}</div>
+      <div class="campo"><b>Observação:</b> ${os.observacao || "-"}</div>
+
+    </div>`;
+  });
+
+  if(lista.innerHTML === "")
+    lista.innerHTML = "<p>Nenhuma OS na Impressão.</p>";
+}
+
+filtro.onkeyup = () => render();
+
+render();
+
+</script>
+
+</body>
+</html>

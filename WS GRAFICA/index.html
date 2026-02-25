@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Controle de dados WS</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 15px;
+      z-index: 1000;
+    }
+
+    /* Botão hambúrguer */
+    .menu-btn {
+      display: none;
+      font-size: 26px;
+      cursor: pointer;
+      color: #011739;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    .btn-sair {
+      background: hsl(235, 100%, 23%);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 7px 16px;
+      transition: 0.3s;
+    }
+
+    .btn-sair:hover {
+      background: #8f3f3f;
+    }
+
+    .logo img {
+      height: 45px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 260px;
+      height: calc(100% - 60px);
+      background: #011739;
+      color: #fff;
+      padding-top: 15px;
+      transition: 0.3s;
+      overflow-y: auto;
+      z-index: 950;
+    }
+
+    .menu {
+      list-style: none;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .menu a:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .submenu {
+      display: none;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .submenu a {
+      padding-left: 40px;
+      font-size: 14px;
+    }
+
+    /* ===== CONTEÚDO ===== */
+    main {
+      margin-top: 60px;
+      margin-left: 260px;
+      height: calc(100vh - 60px);
+      transition: 0.3s;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -260px; /* escondida */
+      }
+
+      .sidebar.active {
+        left: 0; /* aparece */
+      }
+
+      .menu-btn {
+        display: block;
+      }
+
+      main {
+        margin-left: 0 !important;
+      }
+    }
+
+  </style>
+</head>
+
+<body onload="verificarLogin()">
+
+  <!-- HEADER -->
+  <header>
+    <div class="menu-btn" onclick="toggleMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <div class="logo">
+      <img src="LOGO.webp" alt="Logo WSL">
+    </div>
+
+    <div class="user-info">
+      <span id="usuarioNome"></span>
+      <i class="fa fa-user"></i>
+      <button class="btn-sair" onclick="logout()">
+        <i class="fa fa-sign-out-alt"></i> Sair
+      </button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <ul class="menu">
+      <!-- HOME -->
+      <li>
+        <a href="#" onclick="toggleSubmenu()">
+          <i class="fa-solid fa-house"></i> Home
+          <i class="fa-solid fa-chevron-down" style="margin-left:auto;"></i>
+        </a>
+      </li>
+
+      <ul class="submenu" id="submenu">
+        <li><a href="dashboard.html" target="pagina">Dashboard</a></li>
+        <li><a href="avaliacao.html" target="pagina">Avaliação do Processo</a></li>
+      </ul>
+
+      <li><a href="os.html" target="pagina"><i class="fa-solid fa-file-lines"></i> Ordem de Serviço</a></li>
+      <li><a href="preimpressao.html" target="pagina"><i class="fa-solid fa-magnifying-glass"></i> Pré-impressão</a></li>
+      <li><a href="impressao.html" target="pagina"><i class="fa-solid fa-print"></i> Impressão</a></li>
+      <li><a href="corte.html" target="pagina"><i class="fa-solid fa-scissors"></i> Corte</a></li>
+      <li><a href="expedicao.html" target="pagina"><i class="fa-solid fa-truck"></i> Expedição</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTEÚDO -->
+  <main>
+    <iframe name="pagina" src="dashboard.html"></iframe>
+  </main>
+
+  <!-- JS -->
+  <script>
+  const sidebar = document.getElementById("sidebar");
+  const submenu = document.getElementById("submenu");
+  const menuBtn = document.querySelector(".menu-btn");
+
+  function toggleMenu() {
+    sidebar.classList.toggle("active");
+  }
+
+  function toggleSubmenu() {
+    submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+  }
+
+  // 👉 Clicar fora do menu fecha
+  document.addEventListener("click", function (e) {
+    if (
+      !sidebar.contains(e.target) &&
+      !menuBtn.contains(e.target)
+    ) {
+      sidebar.classList.remove("active");
+    }
+  });
+
+  // 👉 Clicar em qualquer link fecha o menu
+  document.querySelectorAll(".menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      sidebar.classList.remove("active");
+    });
+  });
+</script>
+
+  <script src="script.js"></script>
+
+  <script>
+    document.getElementById("usuarioNome").innerText =
+      localStorage.getItem("usuarioLogado");
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,245 @@
+/* SETOR INDEX */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    } 
+
+    body {
+      background: #ffffff;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 260px;
+      height: calc(100% - 60px);
+      background: #011739;
+      color: #fff;
+      padding-top: 20px;
+    }
+
+    .menu {
+      list-style: none;
+    }
+
+    .menu li {
+      border-bottom: 1px solid rgba(251, 245, 245, 0.1);
+    }
+
+    .menu a {
+      display: block;
+      padding: 15px 20px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .menu a:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .submenu {
+      display: none;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .submenu a {
+      padding-left: 40px;
+      font-size: 14px;
+    }
+
+    /* ===== CONTEÚDO ===== */
+    main {
+      margin-top: 60px;
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      height: calc(100vh - 60px);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 220px; }
+      main { margin-left: 220px; width: calc(100% - 220px); }
+    }
+
+    .sidebar li{
+  margin:6px 10px; /* espaço vertical + lateral */
+  list-style:none;
+}
+.sidebar a{
+  display:flex;
+  align-items:center;
+  gap:12px;              /* <<< cria o espacinho correto */
+  padding:12px 16px;
+  color:white;
+  text-decoration:none;
+  font-size:16px;
+}
+
+.sidebar a:hover{
+  background:#4d5053;
+}
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:bold;
+}
+
+.user-info i{
+  color:#000000;
+}
+
+.btn-sair{
+  background:hsl(235, 100%, 23%);
+  color:white;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  transition:0.3s;
+    margin-left:25px;
+  padding:7px 16px;
+}
+
+.btn-sair:hover{
+  background:#8f3f3f;
+}
+.btn-sair .fa-sign-out-alt{
+  color: rgb(255, 255, 255); /* cor da seta */
+}
+
+
+
+
+
+body{
+  margin:0;
+  font-family:Segoe UI, Arial;
+  background:#eef2f6;
+}
+
+/* TITULO */
+header{
+  background:white;
+  padding:18px 24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+h1{
+  margin:0;
+}
+
+/* KPIs */
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.kpi{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  text-align:center;
+}
+
+.kpi h2{
+  font-size:34px;
+  margin:0;
+  color:#0b6efd;
+}
+
+.kpi span{
+  color:#555;
+}
+
+/* LISTAS */
+.area{
+  padding:20px;
+}
+
+.tabela{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.linha{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
+
+.linha:last-child{
+  border-bottom:none;
+}
+
+.atrasado{
+  color:#dc3545;
+  font-weight:bold;
+}
+
+.area-limpar{
+  padding: 20px;         /* espaço em volta */
+  text-align: center;     /* centraliza horizontalmente */
+  margin-top: 20px;       /* distância do grid de KPIs */
+}
+
+.btn-limpar{
+  background:#dc3545;
+  color:white;
+  border:none;
+  padding:10px 22px;      /* botão médio */
+  font-size:15px;         /* texto legível */
+  border-radius:12px;     /* arredondado */
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.btn-limpar:hover{
+  background:#e74c3c;     /* hover mais claro */
+}
+

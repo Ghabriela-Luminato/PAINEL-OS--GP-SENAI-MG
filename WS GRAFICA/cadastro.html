@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro - Controle WS</title>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
+body{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  padding:15px;
+  background: linear-gradient(135deg, #000000, #0d0f4d);
+}
+
+.container{
+  background:white;
+  padding:30px 25px;
+  border-radius:10px;
+  width:100%;
+  max-width:360px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+h2{
+  margin-bottom:20px;
+  color:#000000;
+  font-size:1.4rem;
+}
+
+.input-group{
+  position:relative;
+  margin:16px 0;
+}
+
+.input-group i{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#999;
+  font-size:14px;
+}
+
+.input-group input{
+  width:100%;
+  padding:12px 10px 12px 38px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  outline:none;
+  transition:0.3s;
+  font-size:1rem;
+}
+
+.input-group input:focus{
+  border-color:#585858;
+  box-shadow:0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#002e73;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+  margin-top:10px;
+  font-size:1rem;
+}
+
+button:hover{
+  background:#00132e;
+}
+
+a{
+  display:block;
+  margin-top:18px;
+  font-size:0.9rem;
+  color:#000;
+  text-decoration:none;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+/* 📱 AJUSTE PARA TELAS MUITO PEQUENAS */
+@media (max-width: 400px){
+  .container{
+    padding:22px 18px;
+  }
+
+  h2{
+    font-size:1.2rem;
+  }
+}
+@media (max-width: 480px){
+  .container{
+    max-width: 300px;
+    padding: 20px 15px;
+  }
+
+  h2{
+    font-size: 1.2rem;
+  }
+
+  .input-group input{
+    padding: 10px 10px 10px 36px;
+    font-size: 0.9rem;
+  }
+
+  button{
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  a{
+    font-size: 0.8rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>Criar Conta</h2>
+
+<div class="input-group">
+  <i class="fa-solid fa-user"></i>
+  <input type="text" id="cadUsuario" placeholder="Usuário">
+</div>
+
+<div class="input-group">
+  <i class="fa-solid fa-lock"></i>
+  <input type="password" id="cadSenha" placeholder="Senha">
+</div>
+
+<button onclick="cadastrar()">Cadastrar</button>
+
+<a href="login.html">Voltar para Login</a>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Controle WS</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
+body{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+padding:15px;
+  background: linear-gradient(135deg, #000000, #0d0f4d);
+}
+
+
+
+
+.container{
+  background:white;
+  padding:30px;
+  border-radius:8px;
+  width:320px;
+  text-align:center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+
+
+h2{
+  margin-bottom:20px;
+}
+
+.input-group{
+  position:relative;
+  margin:15px 0;
+}
+
+.input-group i{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#999;
+}
+
+.input-group input{
+  width:100%;
+  padding:10px 10px 10px 35px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  outline:none;
+}
+
+.input-group input:focus{
+  border-color:#1f2630;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#002e73;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+  margin-top:10px;
+}
+
+button:hover{
+  background:#00132e;
+}
+
+a{
+  display:block;
+  margin-top:15px;
+  font-size:14px;
+}
+/* 📱 RESPONSIVO */
+@media (max-width: 480px){
+
+  .container{
+    width:100%;
+    max-width:280px;
+    padding:20px 15px;
+  }
+
+  h2{
+    font-size:1.2rem;
+  }
+
+  .input-group input{
+    padding:9px 9px 9px 32px;
+    font-size:0.9rem;
+  }
+
+  button{
+    padding:10px;
+    font-size:0.9rem;
+  }
+
+  a{
+    font-size:0.8rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>Login</h2>
+ 
+<div class="input-group">
+  <i class="fa-solid fa-user"></i>
+  <input type="text" id="loginUsuario" placeholder="Usuário">
+</div>
+
+<div class="input-group">
+  <i class="fa-solid fa-lock"></i>
+  <input type="password" id="loginSenha" placeholder="Senha">
+</div>
+
+<button onclick="login()">Entrar</button>
+
+<a href="cadastro.html">Criar conta</a>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
