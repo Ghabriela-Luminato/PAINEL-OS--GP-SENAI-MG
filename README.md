@@ -1,5 +1,5 @@
 ## 📌 Sobre o Projeto
-Este sistema foi desenvolvido por **Ghabriela de Oliveira Santos Luminato** como parte do **GP do SENAI (Projeto de Inovação).**
+Este sistema foi desenvolvido por **Ghabriela de Oliveira Santos Luminato** como parte do **GP – Grande Projeto**, uma iniciativa educacional do SENAI, que tem como objetivo aplicar na prática os conhecimentos adquiridos ao longo do curso por meio do desenvolvimento de soluções inovadoras.
 
 O projeto teve como objetivo criar um **Sistema de Controle de Ordens de Serviço***, voltado para organizar, cadastrar e acompanhar serviços realizados, garantindo mais eficiência, controle e rastreabilidade nos atendimentos.
 
